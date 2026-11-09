@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Sistem peminjaman dan pengembalian alat praktik sekolah.">
+  <title>PinjamLab — Peminjaman Alat Praktik</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#"><span class="brand-mark">P</span><span>Pinjam<span class="brand-accent">Lab</span><small>SISTEM PEMINJAMAN ALAT PRAKTIK</small></span></a>
+    <nav><a href="#cara">Cara kerja</a><a href="#form">Ajukan peminjaman</a><button id="adminOpen" class="btn btn-outline">Login Admin</button></nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow"><i></i> LAYANAN INVENTARIS SEKOLAH</span>
+        <h1>Pinjam alat praktik.<br><em>Lebih mudah dan tertata.</em></h1>
+        <p>Ajukan peminjaman alat sesuai jurusan, tentukan tanggal penggunaan dan pengembalian, lalu pantau prosesnya melalui petugas sekolah.</p>
+        <a class="btn btn-primary" href="#form">Ajukan Peminjaman <span>↗</span></a>
+        <div class="hero-meta"><span>✓ Tanpa akun siswa</span><span>✓ Persetujuan petugas</span><span>✓ Riwayat tercatat</span></div>
+      </div>
+      <div class="hero-art">
+        <div class="orb orb-one"></div><div class="orb orb-two"></div>
+        <div class="device-card">
+          <div class="device-head"><span>RINGKASAN INVENTARIS</span><b>● ONLINE</b></div>
+          <div class="device-icon">⌘</div><h3>Peralatan Praktik</h3><p>Kelola peminjaman dengan rapi.</p>
+          <div class="device-stats"><div><strong>3</strong><small>Bidang</small></div><div><strong>39</strong><small>Jenis alat awal</small></div><div><strong>14</strong><small>Kelas</small></div></div>
+          <div class="device-line"><span></span></div>
+        </div>
+        <div class="floating-tag tag-a">✓ Formulir digital</div><div class="floating-tag tag-b">⌁ Data terpusat</div>
+      </div>
+    </section>
+
+    <section class="steps" id="cara">
+      <div><span>01</span><b>Isi data diri</b><small>Nama dan kelas peminjam.</small></div>
+      <div><span>02</span><b>Pilih alat</b><small>Daftar alat menyesuaikan jurusan.</small></div>
+      <div><span>03</span><b>Tentukan tanggal</b><small>Tanggal pinjam dan rencana kembali.</small></div>
+      <div><span>04</span><b>Tunggu petugas</b><small>Permohonan diperiksa admin.</small></div>
+    </section>
+
+    <section class="form-section" id="form">
+      <div class="section-heading"><div><span class="eyebrow">FORMULIR ONLINE</span><h2>Ajukan peminjaman</h2><p>Lengkapi data dengan benar. Permohonan belum berlaku sebelum disetujui petugas.</p></div><span class="secure-pill">⌑ Data tercatat</span></div>
+      <div class="form-layout">
+        <form id="borrowForm" class="panel">
+          <div class="panel-title"><span class="step-bubble">1</span><div><b>Identitas peminjam</b><small>Informasi siswa yang bertanggung jawab.</small></div></div>
+          <div class="field-grid">
+            <label class="field full">Nama lengkap<input id="studentName" required maxlength="100" placeholder="Masukkan nama lengkap"></label>
+            <label class="field">Kelas<select id="studentClass" required><option value="">Pilih kelas</option></select></label>
+            <label class="field">Keperluan praktik<input id="purpose" maxlength="160" placeholder="Contoh: Praktik konfigurasi jaringan"></label>
+          </div>
+          <div class="form-divider"></div>
+          <div class="panel-title"><span class="step-bubble">2</span><div><b>Pilih alat praktik</b><small>Daftar otomatis mengikuti kelas yang dipilih.</small></div></div>
+          <div class="field-grid">
+            <label class="field full">Nama alat<select id="equipment" required disabled><option value="">Pilih kelas terlebih dahulu</option></select></label>
+            <label class="field">Jumlah yang dipinjam<input id="quantity" type="number" min="1" step="1" value="1" required></label>
+            <div class="field stock-box"><span>Stok tersedia</span><b id="stockValue">Pilih alat dahulu</b><small>Stok akan dicek kembali oleh sistem.</small></div>
+          </div>
+          <button class="btn btn-soft add-btn" id="addItem" type="button" disabled>＋ Tambahkan ke daftar</button>
+          <div id="cartWrap" class="cart-wrap hidden"><div class="cart-head"><b>Daftar alat yang diajukan</b><span id="cartCount">0 jenis</span></div><div id="cartItems"></div></div>
+          <div class="form-divider"></div>
+          <div class="panel-title"><span class="step-bubble">3</span><div><b>Jadwal peminjaman</b><small>Masukkan tanggal penggunaan dan rencana pengembalian.</small></div></div>
+          <div class="field-grid">
+            <label class="field">Tanggal peminjaman<input id="borrowDate" type="date" required></label>
+            <label class="field">Rencana pengembalian<input id="returnDate" type="date" required></label>
+          </div>
+          <div class="notice">Tanggal pengembalian adalah rencana. Petugas akan mencatat tanggal pengembalian aktual saat alat benar-benar diterima kembali.</div>
+          <label class="check-row"><input id="confirmData" type="checkbox" required><span>Saya memastikan data peminjaman yang diisi sudah benar dan bersedia bertanggung jawab atas alat yang dipinjam.</span></label>
+          <button class="btn btn-primary submit-btn" type="submit" id="submitBtn">Kirim permohonan <span>↗</span></button>
+          <p class="form-foot">Jangan mengirim permohonan berulang kali untuk transaksi yang sama.</p>
+        </form>
+        <aside class="side-column">
+          <div class="side-card purple-card"><span class="side-icon">✦</span><h3>Perhatikan jadwal</h3><p>Pastikan tanggal pengembalian sesuai kesepakatan dengan guru atau petugas laboratorium.</p></div>
+          <div class="side-card"><h3>Status permohonan</h3><div class="status-list"><div><i class="dot wait"></i><span><b>Menunggu</b><small>Menunggu pemeriksaan admin.</small></span></div><div><i class="dot approved"></i><span><b>Disetujui</b><small>Permohonan diterima.</small></span></div><div><i class="dot rejected"></i><span><b>Ditolak</b><small>Permohonan tidak disetujui.</small></span></div><div><i class="dot returned"></i><span><b>Dikembalikan</b><small>Pengembalian sudah dikonfirmasi.</small></span></div></div></div>
+          <div class="side-note">Butuh bantuan? Hubungi guru atau petugas laboratorium sekolah.</div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer><a class="brand footer-brand" href="#"><span class="brand-mark">P</span><span>Pinjam<span class="brand-accent">Lab</span><small>SISTEM PEMINJAMAN ALAT PRAKTIK</small></span></a><span>© <span id="year"></span> Sistem Inventaris Sekolah</span></footer>
+
+  <dialog id="adminDialog" class="modal">
+    <form method="dialog" class="modal-head"><div><span class="eyebrow">AREA PETUGAS</span><h2>Login Admin</h2></div><button class="close" aria-label="Tutup">×</button></form>
+    <form id="adminLogin" class="modal-body"><label class="field">Email admin<input id="adminEmail" type="email" required autocomplete="username" placeholder="admin@sekolah.sch.id"></label><label class="field">Password<input id="adminPassword" type="password" required autocomplete="current-password" placeholder="Password admin"></label><button class="btn btn-primary submit-btn" type="submit">Masuk ke dashboard</button><p class="form-foot">Akun admin dibuat melalui Supabase Authentication dan diberi role admin oleh pengelola database.</p></form>
+  </dialog>
+  <dialog id="adminPanel" class="modal modal-wide">
+    <div class="modal-head"><div><span class="eyebrow">PANEL PETUGAS</span><h2>Permohonan masuk</h2></div><button class="close" id="closePanel">×</button></div>
+    <div class="admin-toolbar"><span id="adminIdentity"></span><button id="logoutBtn" class="btn btn-outline btn-small">Keluar</button><button id="refreshBtn" class="btn btn-soft btn-small">Muat ulang</button></div>
+    <div id="adminRequests" class="requests-list"><p class="muted">Memuat data...</p></div>
+  </dialog>
+  <div id="toast" class="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>
